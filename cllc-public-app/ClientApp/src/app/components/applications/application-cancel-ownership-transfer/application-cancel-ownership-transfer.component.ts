@@ -76,9 +76,9 @@ export class ApplicationCancelOwnershipTransferComponent extends FormBase implem
     this.busy = this.licenseDataService.getLicenceById(this.licenceId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe((data: License) => {
-          this.licence = data;
-          this.form.patchValue(data);
-        },
+        this.licence = data;
+        this.form.patchValue(data);
+      },
         () => {
           console.log("Error occured");
         }
@@ -153,12 +153,6 @@ export class ApplicationCancelOwnershipTransferComponent extends FormBase implem
         "UnlimitedLiabilityCorporation",
         "LimitedLiabilityCorporation"
       ].indexOf(this.account.businessType) !==
-      -1;
-  }
-
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
       -1;
   }
 

@@ -77,9 +77,9 @@ export class TerminateTPORelationshipComponent extends FormBase implements OnIni
     this.busy = this.licenseDataService.getLicenceById(this.licenceId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe((data: License) => {
-          this.licence = data;
-          this.form.patchValue(data);
-        },
+        this.licence = data;
+        this.form.patchValue(data);
+      },
         () => {
           console.log("Error occured");
         }
@@ -153,12 +153,6 @@ export class TerminateTPORelationshipComponent extends FormBase implements OnIni
         "UnlimitedLiabilityCorporation",
         "LimitedLiabilityCorporation"
       ].indexOf(this.account.businessType) !==
-      -1;
-  }
-
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
       -1;
   }
 

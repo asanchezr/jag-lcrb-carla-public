@@ -447,12 +447,6 @@ export class LiquorRenewalComponent extends FormBase implements OnInit {
       -1;
   }
 
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
-      -1;
-  }
-
   saveForLater() {
     this.saveForLaterInProgress = true;
     this.save(true)

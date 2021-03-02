@@ -163,12 +163,6 @@ export class ApplicationThirdPartyOperatorComponent extends FormBase implements 
       -1;
   }
 
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
-      -1;
-  }
-
   onAccountSelect(proposedAccount: TransferAccount) {
     this.form.get("proposedTPO").patchValue(proposedAccount);
   }

@@ -200,7 +200,7 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
     this.dynamicsDataService.getRecord("indigenousnations", "")
       .subscribe(data => this.indigenousNations = data);
 
-    // get the application form 
+    // get the application form
     this.dynamicsFormDataService.getDynamicsForm("df0e3410-b8d4-46f8-bcef-1b20a01a66d7") // catering form for demo
       .pipe(takeWhile(() => this.componentActive))
       .subscribe(value => this.dynamicsForm = value);
@@ -208,31 +208,31 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
     this.busy = this.applicationDataService.getApplicationById(this.applicationId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe((data: Application) => {
-          if (data.establishmentParcelId) {
-            data.establishmentParcelId = data.establishmentParcelId.replace(/-/g, "");
-          }
-          if (data.applicantType === "IndigenousNation") {
-            (data as any).applyAsIndigenousNation = true;
-          }
-          this.application = data;
-          this.hideFormControlByType();
+        if (data.establishmentParcelId) {
+          data.establishmentParcelId = data.establishmentParcelId.replace(/-/g, "");
+        }
+        if (data.applicantType === "IndigenousNation") {
+          (data as any).applyAsIndigenousNation = true;
+        }
+        this.application = data;
+        this.hideFormControlByType();
 
-          this.addDynamicContent();
+        this.addDynamicContent();
 
-          const noNulls = Object.keys(data)
-            .filter(e => data[e] !== null)
-            .reduce((o, e) => {
-                o[e] = data[e];
-                return o;
-              },
-              {});
+        const noNulls = Object.keys(data)
+          .filter(e => data[e] !== null)
+          .reduce((o, e) => {
+            o[e] = data[e];
+            return o;
+          },
+            {});
 
-          this.form.patchValue(noNulls);
-          if (data.isPaid) {
-            this.form.disable();
-          }
-          this.savedFormData = this.form.value;
-        },
+        this.form.patchValue(noNulls);
+        if (data.isPaid) {
+          this.form.disable();
+        }
+        this.savedFormData = this.form.value;
+      },
         () => {
           console.log("Error occured");
         }
@@ -275,21 +275,21 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
 
   private isHoursOfSaleValid(): boolean {
     return !this.application.applicationType.showHoursOfSale ||
-    (this.form.get("serviceHoursSundayOpen").valid &&
-      this.form.get("serviceHoursMondayOpen").valid &&
-      this.form.get("serviceHoursTuesdayOpen").valid &&
-      this.form.get("serviceHoursWednesdayOpen").valid &&
-      this.form.get("serviceHoursThursdayOpen").valid &&
-      this.form.get("serviceHoursFridayOpen").valid &&
-      this.form.get("serviceHoursSaturdayOpen").valid &&
-      this.form.get("serviceHoursSundayClose").valid &&
-      this.form.get("serviceHoursMondayClose").valid &&
-      this.form.get("serviceHoursTuesdayClose").valid &&
-      this.form.get("serviceHoursWednesdayClose").valid &&
-      this.form.get("serviceHoursThursdayClose").valid &&
-      this.form.get("serviceHoursFridayClose").valid &&
-      this.form.get("serviceHoursSaturdayClose").valid
-    );
+      (this.form.get("serviceHoursSundayOpen").valid &&
+        this.form.get("serviceHoursMondayOpen").valid &&
+        this.form.get("serviceHoursTuesdayOpen").valid &&
+        this.form.get("serviceHoursWednesdayOpen").valid &&
+        this.form.get("serviceHoursThursdayOpen").valid &&
+        this.form.get("serviceHoursFridayOpen").valid &&
+        this.form.get("serviceHoursSaturdayOpen").valid &&
+        this.form.get("serviceHoursSundayClose").valid &&
+        this.form.get("serviceHoursMondayClose").valid &&
+        this.form.get("serviceHoursTuesdayClose").valid &&
+        this.form.get("serviceHoursWednesdayClose").valid &&
+        this.form.get("serviceHoursThursdayClose").valid &&
+        this.form.get("serviceHoursFridayClose").valid &&
+        this.form.get("serviceHoursSaturdayClose").valid
+      );
   }
 
   canDeactivate(): Observable<boolean> {
@@ -327,8 +327,8 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
 
   showExteriorRenderings() {
     let show = this.application &&
-    (this.application.applicationType.name === ApplicationTypeNames.CRSEstablishmentNameChange ||
-      this.application.applicationType.name === ApplicationTypeNames.CRSStructuralChange);
+      (this.application.applicationType.name === ApplicationTypeNames.CRSEstablishmentNameChange ||
+        this.application.applicationType.name === ApplicationTypeNames.CRSStructuralChange);
     show = show && this.form.get("proposedChange").value === "Yes";
     return show;
   }
@@ -346,9 +346,9 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
       return of(true).pipe(delay(10));
     }
     return forkJoin(
-        this.applicationDataService.updateApplication({ ...this.application, ...this.form.value }),
-        this.prepareTiedHouseSaveRequest(this.tiedHouseFormData)
-      ).pipe(takeWhile(() => this.componentActive))
+      this.applicationDataService.updateApplication({ ...this.application, ...this.form.value }),
+      this.prepareTiedHouseSaveRequest(this.tiedHouseFormData)
+    ).pipe(takeWhile(() => this.componentActive))
       .pipe(catchError(() => {
         this.snackBar.open("Error saving Application", "Fail", { duration: 3500, panelClass: ["red-snackbar"] });
         return of(false);
@@ -386,8 +386,8 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
     this.applicationDataService.getApplicationById(this.applicationId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe((data: Application) => {
-          this.store.dispatch(new currentApplicationActions.SetCurrentApplicationAction(data));
-        }
+        this.store.dispatch(new currentApplicationActions.SetCurrentApplicationAction(data));
+      }
       );
   }
 
@@ -422,9 +422,9 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
     this.busy = this.paymentDataService.getPaymentSubmissionUrl(this.applicationId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe(jsonUrl => {
-          window.location.href = jsonUrl["url"];
-          return jsonUrl["url"];
-        },
+        window.location.href = jsonUrl["url"];
+        return jsonUrl["url"];
+      },
         err => {
           if (err._body === "Payment already made") {
             this.snackBar.open("Application payment has already been made.",
@@ -552,9 +552,9 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
           this.busy = this.applicationDataService.cancelApplication(this.applicationId)
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(() => {
-                this.savedFormData = this.form.value;
-                this.router.navigate(["/dashboard"]);
-              },
+              this.savedFormData = this.form.value;
+              this.router.navigate(["/dashboard"]);
+            },
               () => {
                 this.snackBar.open("Error cancelling the application",
                   "Fail",
@@ -596,12 +596,4 @@ export class DynamicApplicationComponent extends FormBase implements OnInit {
       ].indexOf(this.application.applicationType.name) !==
       -1;
   }
-
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
-      -1;
-  }
-
-
 }

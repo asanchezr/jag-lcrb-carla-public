@@ -108,25 +108,25 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
       .pipe(takeWhile(() => this.componentActive))
       // .pipe(mergeMap(application))
       .subscribe((data: Application) => {
-          if (data.establishmentParcelId) {
-            data.establishmentParcelId = data.establishmentParcelId.replace(/-/g, "");
-          }
+        if (data.establishmentParcelId) {
+          data.establishmentParcelId = data.establishmentParcelId.replace(/-/g, "");
+        }
 
-          this.application = data;
+        this.application = data;
 
-          this.addDynamicContent();
+        this.addDynamicContent();
 
-          const noNulls = Object.keys(data)
-            .filter(e => data[e] !== null)
-            .reduce((o, e) => {
-                o[e] = data[e];
-                return o;
-              },
-              {});
+        const noNulls = Object.keys(data)
+          .filter(e => data[e] !== null)
+          .reduce((o, e) => {
+            o[e] = data[e];
+            return o;
+          },
+            {});
 
-          this.form.patchValue(noNulls);
-          this.savedFormData = this.form.value;
-        },
+        this.form.patchValue(noNulls);
+        this.savedFormData = this.form.value;
+      },
         () => {
           console.log("Error occured");
         }
@@ -137,9 +137,9 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
     this.busy = this.paymentDataService.getInvoiceFeePaymentSubmissionUrl(this.application.id)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe(res => {
-          const data = res as any;
-          window.location.href = data.url;
-        },
+        const data = res as any;
+        window.location.href = data.url;
+      },
         err => {
           if (err._body === "Payment already made") {
             this.snackBar.open("Licence Fee payment has already been made.",
@@ -175,9 +175,9 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
     } as Establishment;
 
     return forkJoin(
-        this.applicationDataService.updateApplication({ ...this.application, ...this.form.value }),
-        this.establishmentDataService.upEstablishment(establishment)
-      ).pipe(takeWhile(() => this.componentActive))
+      this.applicationDataService.updateApplication({ ...this.application, ...this.form.value }),
+      this.establishmentDataService.upEstablishment(establishment)
+    ).pipe(takeWhile(() => this.componentActive))
       .pipe(catchError(() => {
         this.snackBar.open("Error saving Application", "Fail", { duration: 3500, panelClass: ["red-snackbar"] });
         return of(false);
@@ -198,8 +198,8 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
     this.applicationDataService.getApplicationById(this.applicationId)
       .pipe(takeWhile(() => this.componentActive))
       .subscribe((data: Application) => {
-          this.store.dispatch(new currentApplicationActions.SetCurrentApplicationAction(data));
-        }
+        this.store.dispatch(new currentApplicationActions.SetCurrentApplicationAction(data));
+      }
       );
   }
 
@@ -258,9 +258,9 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
           this.busy = this.applicationDataService.cancelApplication(this.applicationId)
             .pipe(takeWhile(() => this.componentActive))
             .subscribe(() => {
-                this.savedFormData = this.form.value;
-                this.router.navigate(["/dashboard"]);
-              },
+              this.savedFormData = this.form.value;
+              this.router.navigate(["/dashboard"]);
+            },
               () => {
                 this.snackBar.open("Error cancelling the application",
                   "Fail",
@@ -291,11 +291,4 @@ export class ApplicationAndLicenceFeeComponent extends FormBase implements OnIni
       ].indexOf(this.account.businessType) !==
       -1;
   }
-
-  showFormControl(state: string): boolean {
-    return [FormControlState.Show.toString(), FormControlState.ReadOnly.toString()]
-      .indexOf(state) !==
-      -1;
-  }
-
 }

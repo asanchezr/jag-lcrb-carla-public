@@ -73,12 +73,12 @@ export class FormBase implements OnDestroy {
       .indexOf(state) !== -1;
   }
 
-  getApplicationContent(contentCartegory: string) {
+  getApplicationContent(contentCategory: string) {
     let body = '';
     if (this.application.applicationType.contentTypes) {
       const contents =
         this.application.applicationType.contentTypes
-          .filter(t => t.category === contentCartegory
+          .filter(t => t.category === contentCategory
             && (t.businessTypes.indexOf(this.application.applicantType) !== -1
               || t.businessTypes.indexOf(this.account && this.account.businessType) !== -1)
           );
