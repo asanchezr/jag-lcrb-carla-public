@@ -157,8 +157,6 @@ export class ApplicationComponent extends FormBase implements OnInit {
   }
 
   ngOnInit() {
-
-
     this.form = this.fb.group({
       id: [''],
       assignedLicence: this.fb.group({
@@ -166,7 +164,7 @@ export class ApplicationComponent extends FormBase implements OnInit {
         establishmentAddressStreet: [''],
         establishmentAddressCity: [''],
         establishmentAddressPostalCode: [''],
-        establishmentParcelId: ['']
+        establishmentParcelId: [{ value: '', disabled: true }]
       }),
       establishmentName: ['', [
         Validators.required,
@@ -288,14 +286,8 @@ export class ApplicationComponent extends FormBase implements OnInit {
           this.updateDescriptionRequired(checked, 'patioLiquorCarriedDescription');
         });
       }
-
       this.updatePatioRequired(checked);
-
-
     });
-
-
-
 
     this.form.get('indigenousNation').valueChanges
       .pipe(filter(value => value && value.length >= 3),
@@ -371,11 +363,11 @@ export class ApplicationComponent extends FormBase implements OnInit {
 
             this.application = data;
             this.isShowLGINApproval = (
-                this?.application?.applicationType?.isShowLGINApproval ||
-                (this?.application?.applicationStatus === "Pending for LG/FN/Police Feedback"
-                 && this?.application?.applicationType?.isShowLGZoningConfirmation !== true
-                )
-              );
+              this?.application?.applicationType?.isShowLGINApproval ||
+              (this?.application?.applicationStatus === "Pending for LG/FN/Police Feedback"
+                && this?.application?.applicationType?.isShowLGZoningConfirmation !== true
+              )
+            );
 
             this.hideFormControlByType();
 
@@ -507,8 +499,8 @@ export class ApplicationComponent extends FormBase implements OnInit {
     }
 
     if ((this.application.applicationType.name !== ApplicationTypeNames.SpecialEventAreaEndorsement
-        && this.application.applicationType.name !== ApplicationTypeNames.LoungeAreaEndorsment) &&
-        !this.application.applicationType.showPatio) {
+      && this.application.applicationType.name !== ApplicationTypeNames.LoungeAreaEndorsment) &&
+      !this.application.applicationType.showPatio) {
       this.form.get('isHasPatio').disable();
     }
 
@@ -525,6 +517,16 @@ export class ApplicationComponent extends FormBase implements OnInit {
       this.form.get('establishmentAddressCity').disable();
       this.form.get('establishmentAddressPostalCode').disable();
       this.form.get('establishmentParcelId').disable();
+    }
+
+    // LCSD-4813 When showing the current establishment address as read-only, if the PID field is empty, make it editable and mandatory
+    if (this.application.applicationType.currentEstablishmentAddress === FormControlState.ReadOnly) {
+      if (!this.application.assignedLicence.establishmentParcelId) {
+        this.form.get('assignedLicence.establishmentParcelId').enable();
+        this.form.get('assignedLicence.establishmentParcelId').setValidators([Validators.required, Validators.maxLength(9), Validators.minLength(9)]);
+      } else {
+        this.form.get('assignedLicence.establishmentParcelId').disable();
+      }
     }
 
     if (this.application.applicationType.establishmentName !== FormControlState.Show) {
@@ -846,7 +848,7 @@ export class ApplicationComponent extends FormBase implements OnInit {
   submit_application() {
 
     // some endorsements are free if you apply before the licence is issued
-     let freeEndorsement = this.application.applicationType.isEndorsement && (this?.application?.assignedLicence == null);
+    let freeEndorsement = this.application.applicationType.isEndorsement && (this?.application?.assignedLicence == null);
     // do a validation check; only allow submission if no validation messages
     if (this.isValid()) {
       // show status
@@ -1047,12 +1049,12 @@ export class ApplicationComponent extends FormBase implements OnInit {
       applicationTypeName === ApplicationTypeNames.LRSTransferofLocation
     );
 
-//    if ((this.establishmentNameIsChanging() || !signageNotRequired)
-//      && this.application.applicationType.signage === FormControlState.Show
-//       && ((this.uploadedSignageDocuments || 0) < 1)) {
-//      valid = false;
-//      this.validationMessages.push('At least one signage document is required.');
-//    }
+    //    if ((this.establishmentNameIsChanging() || !signageNotRequired)
+    //      && this.application.applicationType.signage === FormControlState.Show
+    //       && ((this.uploadedSignageDocuments || 0) < 1)) {
+    //      valid = false;
+    //      this.validationMessages.push('At least one signage document is required.');
+    //    }
 
     if (this.application.applicationType.validInterest === FormControlState.Show &&
       ((this.uploadedValidInterestDocuments || 0) < 1)) {
@@ -1100,7 +1102,7 @@ export class ApplicationComponent extends FormBase implements OnInit {
 
       if (!this.form.get('hasValidInterest').value) {
         this.validationMessages.push('The owner of the business must own or have an agreement to purchase the proposed establishment, or, be the lessee or have a binding agreement to lease the proposed establishment');
-       }
+      }
 
       if (!this.form.get('willHaveValidInterest').value) {
         this.validationMessages.push('Ownership or the lease agreement must be in place at the time of licensing');
@@ -1111,11 +1113,11 @@ export class ApplicationComponent extends FormBase implements OnInit {
     // special validation for RLRS
 
     if (this.form.get('isRlrsLocatedInRuralCommunityAlone')
-        && this.form.get('isRlrsLocatedAtTouristDestinationAlone')
-        && this.form.get('isRlrsLocatedInRuralCommunityAlone').value
-        && this.form.get('isRlrsLocatedInRuralCommunityAlone').value !== 845280000 // NOT YES
-        && !this.form.get('isRlrsLocatedAtTouristDestinationAlone').value // NO VALUE FOR IS LOCATED AT TOURIST DESTINATION ALONE
-      ) {
+      && this.form.get('isRlrsLocatedAtTouristDestinationAlone')
+      && this.form.get('isRlrsLocatedInRuralCommunityAlone').value
+      && this.form.get('isRlrsLocatedInRuralCommunityAlone').value !== 845280000 // NOT YES
+      && !this.form.get('isRlrsLocatedAtTouristDestinationAlone').value // NO VALUE FOR IS LOCATED AT TOURIST DESTINATION ALONE
+    ) {
       valid = false;
       this.validationMessages.push('Please enter a value for Is the proposed RLRS located in a tourist destination resort with no other RLRS?');
     }
@@ -1125,7 +1127,7 @@ export class ApplicationComponent extends FormBase implements OnInit {
       && this.form.get('isRlrsLocatedAtTouristDestinationAlone').value
       && this.form.get('isRlrsLocatedAtTouristDestinationAlone').value === 845280000 // IS YES
       && !this.form.get('rlrsResortCommunityDescription').value // NO VALUE FOR DESCRIPTION
-      ) {
+    ) {
       valid = false;
       this.validationMessages.push('Resort community description is required.');
     }
@@ -1171,6 +1173,7 @@ export class ApplicationComponent extends FormBase implements OnInit {
       establishmentEmail: 'Please enter the email address for the store',
       establishmentPhone: 'Please enter the store phone number',
       establishmentParcelId: 'Please enter the Parcel Identifier (format: 9 digits)',
+      'assignedLicence.establishmentParcelId': 'Please enter the Parcel Identifier (format: 9 digits)',
       establishmentopeningdate: 'Please enter the store opening date',
       federalProducerNames: 'Please enter the name of federal producer',
       hasValidInterest: 'Please enter a value for valid interest',
@@ -1427,9 +1430,8 @@ export class ApplicationComponent extends FormBase implements OnInit {
       (this.application.licenseType === "Licensee Retail Store" || this.application.licenseType === "Wine Store");
   }
 
-  showDynamicForm(formReference, tabs)
-{
-  if (this.form.get('isHasPatio').enabled) {
+  showDynamicForm(formReference, tabs) {
+    if (this.form.get('isHasPatio').enabled) {
       this.updateDynamicValidation();
       return this.form.get('isHasPatio').value && formReference && tabs;
     }
